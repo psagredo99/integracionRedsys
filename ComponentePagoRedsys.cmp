@@ -1,0 +1,51 @@
+<aura:component  implements="forceCommunity:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:availableForFlowScreens" access="global"> 
+    
+    <aura:attribute name="merchantData" type="Object"/>
+    <aura:attribute name="formActionURL" type="String"/> 
+    
+    <aura:attribute name = "Ds_Merchant_Amount" type="String"/>
+    <aura:attribute name = "Ds_Merchant_Order" type="String"/>
+    <aura:attribute name = "Ds_Merchant_ProductDescription" type="String"/>
+    <aura:attribute name = "Ds_Merchant_MerchantCode" type="String"/>
+    <aura:attribute name = "Ds_Merchant_Terminal" type="String"/>
+    <aura:attribute name = "DS_Merchant_Titular" type="String"/>
+    <aura:attribute name = "DS_Merchant_UrlOK" type="String"/>
+    <aura:attribute name = "DS_Merchant_UrlKO" type="String"/>
+    
+    <aura:attribute name = "Ds_Merchant_Amount_Mod" type="Integer"/>
+
+    <aura:attribute name="merchantParameters" type="String"/>
+    <aura:attribute name = "Signature" type="String"/>
+
+    <ltng:require scripts="{!join(',',
+                           $Resource.CryptoJS  + '/crypto-js.min.js',
+                           $Resource.CryptoJS  + '/tripledes.min.js'
+                           )}"
+                  afterScriptsLoaded="{!c.doInit}"/>
+    
+    
+    <lightning:card title="Resumen pago">
+        
+        <form aura:id="paymentForm" id="paymentForm" action="{!v.formActionURL}" method="POST">
+            
+            <div class="c-container">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem padding="around-small" size="6">
+                        <p class="eventoDetailDatos"><span class="dba-color"><b>Nombre Asociado: </b></span>{!v.DS_Merchant_Titular}</p>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="6">
+                        <p class="eventoDetailDatos"><span class="dba-color"><b>Nombre Evento: </b></span>{!v.Ds_Merchant_ProductDescription}</p>
+                    </lightning:layoutItem>               
+                    <lightning:layoutItem padding="around-small" size="6">
+                        <p class="eventoDetailDatos"><span class="dba-color"><b>Precio: </b></span>{!v.Ds_Merchant_Amount_Mod} €</p>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+
+            <input type="hidden" id="Ds_SignatureVersion" name="Ds_SignatureVersion" value="HMAC_SHA256_V1" />
+            <input type="hidden" aura:id="Ds_MerchantParameters" id="Ds_MerchantParameters" name="Ds_MerchantParameters" value="{!v.merchantParameters}" />
+            <input type="hidden" aura:id="Ds_Signature" id="Ds_Signature" name="Ds_Signature" value="{!v.Signature}" />  
+            <lightning:button label="Pagar con tarjeta" onclick="{!c.handleSubmit}" />
+        </form>
+    </lightning:card>
+</aura:component>
